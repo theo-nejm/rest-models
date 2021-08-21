@@ -26,7 +26,7 @@
 
 - You can have how many models you want in your application.
 
-- Models haves abstracted methods to make the things easier.
+- Models have abstracted methods to make things easier.
 
 ## Contributors:
 
