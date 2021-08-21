@@ -167,6 +167,13 @@ class Collection {
         this.url = url;
         mobx.makeAutoObservable(this, {}, { autoBind: true });
     }
+    setData(data) {
+        this.data = data;
+    }
+    getFullData() {
+        if (this.data)
+            return this.data;
+    }
     get(primaryKey) {
         return __awaiter(this, void 0, void 0, function* () {
             try {

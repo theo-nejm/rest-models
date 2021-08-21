@@ -9,6 +9,14 @@ export class Collection<T> {
     makeAutoObservable(this, {}, { autoBind: true });
   }
 
+  private setData(data: T[]) {
+    this.data = data;
+  }
+
+  getFullData() {
+    if (this.data) return this.data;
+  }
+
   async get(primaryKey: number | string) {
     try {
       const response = await api.get(`${this.url}/${primaryKey}`);
