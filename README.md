@@ -28,12 +28,6 @@
 
 - Models haves abstracted methods to make the things easier.
 
-```
-DOCS:
-
-A model basically haves 2 attributes you should care about.
-```
-
 ## Contributors:
 
 - List of people that made it true:
