@@ -1,3 +1,4 @@
+import { AxiosResponse } from "axios";
 import { makeAutoObservable } from "mobx";
 import { api } from "./api";
 
@@ -86,24 +87,23 @@ export class Model<T> {
    */
 
   async save() {
-    this.pastData = null;
-
     this.setLoading(true);
     try {
-      if (this.data && !this.id) {
-        const response = await api.post(this.url(), this.data);
-
-        this.data = response.data;
-      }
+      let response: AxiosResponse<T>;
 
       if (this.data) {
-        const response = await api[this.modelConfig.editMethod](
-          this.url(),
-          this.data
-        );
-
-        this.data = response.data;
+        if (this.id) {
+          response = await api[this.modelConfig.editMethod](
+            this.url(),
+            this.data
+          );
+        } else {
+          response = await api.post(this.url(), this.data);
+        }
       }
+
+      this.data = response.data;
+      this.pastData = null;
     } catch (error) {
       throw new Error(
         `Wasn't possible to send your request to api. \n\n ${error.message}`

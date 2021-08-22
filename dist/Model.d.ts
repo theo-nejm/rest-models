@@ -15,7 +15,7 @@ export declare class Model<T> {
     get id(): any;
     setData(data: T): void;
     set(data: Partial<T>): void;
-    get(param?: string): T | null;
+    get(param?: keyof T): T[keyof T] | T | null;
     getOriginalData(): T;
     url(): string;
     /**

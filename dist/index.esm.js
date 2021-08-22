@@ -68,6 +68,7 @@ class Model {
             this.data = newData;
         }
     }
+    // TODO: implementar overloadings para quando não apssar um parâmetro saber que virá apenas T
     // TODO: "species.name" -> bulbasaur
     get(param) {
         if (param && !this.data[param])
@@ -82,24 +83,29 @@ class Model {
     url() {
         const url = this.modelConfig.url;
         const hasSlash = url[url.length - 1] === "/";
-        return hasSlash ? url + this.id : url + "/" + this.id;
+        if (this.id) {
+            return hasSlash ? url + this.id : url + "/" + this.id;
+        }
+        return url;
     }
     /**
      * Requests
      */
     save() {
         return __awaiter(this, void 0, void 0, function* () {
-            this.pastData = null;
             this.setLoading(true);
             try {
-                if (this.data && !this.id) {
-                    const response = yield api.post(this.url(), this.data);
-                    this.data = response.data;
-                }
+                let response;
                 if (this.data) {
-                    const response = yield api[this.modelConfig.editMethod](this.url(), this.data);
-                    this.data = response.data;
+                    if (this.id) {
+                        response = yield api[this.modelConfig.editMethod](this.url(), this.data);
+                    }
+                    else {
+                        response = yield api.post(this.url(), this.data);
+                    }
                 }
+                this.data = response.data;
+                this.pastData = null;
             }
             catch (error) {
                 throw new Error(`Wasn't possible to send your request to api. \n\n ${error.message}`);
@@ -111,6 +117,9 @@ class Model {
     }
     remove() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (!this.id) {
+                throw new Error("Impossible to delete objects without a primary key.");
+            }
             if (this.data) {
                 try {
                     yield api.delete(this.url());
