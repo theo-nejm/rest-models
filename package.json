@@ -4,7 +4,7 @@
     "name": "Antonio Sampaio"
   },
   "version": "1.0.3",
-  "description": "",
+  "description": "Data manipulation made easy",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
