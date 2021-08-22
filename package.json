@@ -10,7 +10,7 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "repository": {
-    "url": "https://github.com/SampaioLeal/rest-models"
+    "url": "https://github.com/rest-models/rest-models"
   },
   "files": [
     "dist",
