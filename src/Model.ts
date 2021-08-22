@@ -74,7 +74,11 @@ export class Model<T> {
     const url = this.modelConfig.url;
     const hasSlash = url[url.length - 1] === "/";
 
-    return hasSlash ? url + this.id : url + "/" + this.id;
+    if (this.id) {
+      return hasSlash ? url + this.id : url + "/" + this.id;
+    }
+
+    return url;
   }
 
   /**
@@ -110,10 +114,10 @@ export class Model<T> {
   }
 
   async remove() {
-    if(!this.id) {
-      throw new Error('Impossible to delete objects without a primary key.')
+    if (!this.id) {
+      throw new Error("Impossible to delete objects without a primary key.");
     }
-    
+
     if (this.data) {
       try {
         await api.delete(this.url());
