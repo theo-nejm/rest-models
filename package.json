@@ -3,7 +3,7 @@
   "author": {
     "name": "Antonio Sampaio"
   },
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Data manipulation made easy",
   "license": "MIT",
   "main": "dist/index.js",
