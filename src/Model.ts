@@ -110,6 +110,10 @@ export class Model<T> {
   }
 
   async remove() {
+    if(!this.id) {
+      throw new Error('Impossible to delete objects without a primary key.')
+    }
+    
     if (this.data) {
       try {
         await api.delete(this.url());
