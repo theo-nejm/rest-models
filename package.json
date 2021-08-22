@@ -1,11 +1,17 @@
 {
   "name": "rest-models",
+  "author": {
+    "name": "Antonio Sampaio"
+  },
   "version": "1.0.2",
   "description": "",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "repository": {
+    "url": "https://github.com/SampaioLeal/rest-models"
+  },
   "files": [
     "dist",
     "package.json"
