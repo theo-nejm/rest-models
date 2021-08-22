@@ -56,11 +56,13 @@ export class Model<T> {
     }
   }
 
+  // TODO: implementar overloadings para quando não apssar um parâmetro saber que virá apenas T
   // TODO: "species.name" -> bulbasaur
-  get(param?: string): T | null {
+  get(param?: keyof T): T[keyof T] | T | null {
     if (param && !this.data[param])
       throw new ReferenceError("This parameter doesn't exists in this model.");
     if (param && this.data[param]) return this.data[param];
+
     return this.data;
   }
 
