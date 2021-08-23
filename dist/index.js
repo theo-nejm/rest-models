@@ -189,35 +189,45 @@ class Collection {
     setData(data) {
         this.data = data;
     }
-    list() {
+    get list() {
         return this.data;
+    }
+    fetch(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield api.get(this.url, {
+                    params,
+                });
+                const newData = response.data.map((data) => {
+                    return this.createModel(data);
+                });
+                this.setData(newData);
+            }
+            catch (error) {
+                throw new Error(`Failed to fetch new data! \n\n ${error.message}`);
+            }
+        });
     }
     get(primaryKey) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
+                const cachedData = this.list.find((data) => data.id === primaryKey);
+                if (cachedData)
+                    return cachedData;
                 const response = yield api.get(`${this.url}/${primaryKey}`);
-                const model = new Model({ url: "/pokemon" });
-                model.setData(response.data);
-                return model;
+                return this.createModel(response.data);
             }
             catch (err) {
                 throw new Error("Wasn't possible to connect to this api's endpoint.");
             }
         });
     }
+    createModel(initialData) {
+        const model = new Model({ url: this.url });
+        model.setData(initialData);
+        return model;
+    }
 }
-/*
-const pokemonCollection = new Collection({
-  url: "/pokemons"
-})
-
-pokemonCollection.fetch()
-pokemonCollection.list // [{}, {}, {}]
-
-pokemonCollection.get(2) // GET /pokemon/2 -> { id: 2, name: "pikanocu" }
-
-pokemonCollection.setFilters({ name: "pika" }) // GET /pokemon?name=pika -> [{ name: "pikachu" }]
-*/
 
 exports.Collection = Collection;
 exports.Model = Model;
