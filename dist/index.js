@@ -41,7 +41,6 @@ function __awaiter(thisArg, _arguments, P, generator) {
 
 class Model {
     // TODO: analisar ligação com uma Collection
-    // TODO: adicionar estado de carregamento das requests
     constructor(modelConfig) {
         this.data = null;
         this.pastData = null;
@@ -53,6 +52,9 @@ class Model {
         };
         mobx.makeAutoObservable(this, {}, { autoBind: true });
         this.modelConfig = Object.assign(Object.assign({}, this.modelConfig), modelConfig);
+    }
+    setPastData(data) {
+        this.pastData = data;
     }
     setLoading(loading) {
         this.loading = loading;
@@ -67,6 +69,9 @@ class Model {
         this.data = data;
     }
     set(data) {
+        const dataKeys = Object.keys(data);
+        if (dataKeys.includes("id"))
+            console.warn("We discourage changing the id value.");
         if (this.data) {
             const newData = Object.assign(Object.assign({}, this.data), data);
             const isDifferent = JSON.stringify(this.data) !== JSON.stringify(newData);
@@ -112,8 +117,8 @@ class Model {
                         response = yield api.post(this.url(), this.data);
                     }
                 }
-                this.data = response.data;
-                this.pastData = null;
+                this.setData(response.data);
+                this.setPastData(null);
             }
             catch (error) {
                 throw new Error(`Wasn't possible to send your request to api. \n\n ${error.message}`);
@@ -125,17 +130,21 @@ class Model {
     }
     remove() {
         return __awaiter(this, void 0, void 0, function* () {
+            this.setLoading(true);
             if (!this.id) {
                 throw new Error("Impossible to delete objects without a primary key.");
             }
             if (this.data) {
                 try {
                     yield api.delete(this.url());
-                    this.pastData = null;
-                    this.data = null;
+                    this.setData(null);
+                    this.setPastData(null);
                 }
                 catch (err) {
                     throw new Error("Failed to delete model!");
+                }
+                finally {
+                    this.setLoading(false);
                 }
             }
         });
@@ -174,14 +183,14 @@ class Model {
 class Collection {
     constructor(url) {
         this.url = url;
+        this.data = [];
         mobx.makeAutoObservable(this, {}, { autoBind: true });
     }
     setData(data) {
         this.data = data;
     }
-    getFullData() {
-        if (this.data)
-            return this.data;
+    list() {
+        return this.data;
     }
     get(primaryKey) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -197,6 +206,18 @@ class Collection {
         });
     }
 }
+/*
+const pokemonCollection = new Collection({
+  url: "/pokemons"
+})
+
+pokemonCollection.fetch()
+pokemonCollection.list // [{}, {}, {}]
+
+pokemonCollection.get(2) // GET /pokemon/2 -> { id: 2, name: "pikanocu" }
+
+pokemonCollection.setFilters({ name: "pika" }) // GET /pokemon?name=pika -> [{ name: "pikachu" }]
+*/
 
 exports.Collection = Collection;
 exports.Model = Model;

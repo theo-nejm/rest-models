@@ -4,6 +4,6 @@ export declare class Collection<T> {
     private data;
     constructor(url: string);
     private setData;
-    getFullData(): T[];
+    list(): T[];
     get(primaryKey: number | string): Promise<Model<T>>;
 }
