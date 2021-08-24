@@ -20,8 +20,11 @@ export class Model<T> {
     editMethod: "put",
   };
 
+  private setPastData(data: T | null) {
+    this.pastData = data;
+  }
+
   // TODO: analisar ligação com uma Collection
-  // TODO: adicionar estado de carregamento das requests
   constructor(modelConfig: ModelConfig) {
     makeAutoObservable(this, {}, { autoBind: true });
 
@@ -45,6 +48,10 @@ export class Model<T> {
   }
 
   set(data: Partial<T>) {
+    const dataKeys = Object.keys(data);
+    if (dataKeys.includes("id"))
+      console.warn("We discourage changing the id value.");
+
     if (this.data) {
       const newData = { ...this.data, ...data };
       const isDifferent = JSON.stringify(this.data) !== JSON.stringify(newData);
@@ -71,7 +78,7 @@ export class Model<T> {
     return this.pastData || this.data;
   }
 
-  url() {
+  private url() {
     const url = this.modelConfig.url;
     const hasSlash = url[url.length - 1] === "/";
 
@@ -102,8 +109,8 @@ export class Model<T> {
         }
       }
 
-      this.data = response.data;
-      this.pastData = null;
+      this.setData(response.data);
+      this.setPastData(null);
     } catch (error) {
       throw new Error(
         `Wasn't possible to send your request to api. \n\n ${error.message}`
@@ -114,6 +121,8 @@ export class Model<T> {
   }
 
   async remove() {
+    this.setLoading(true);
+
     if (!this.id) {
       throw new Error("Impossible to delete objects without a primary key.");
     }
@@ -121,10 +130,12 @@ export class Model<T> {
     if (this.data) {
       try {
         await api.delete(this.url());
-        this.pastData = null;
-        this.data = null;
+        this.setData(null);
+        this.setPastData(null);
       } catch (err) {
         throw new Error("Failed to delete model!");
+      } finally {
+        this.setLoading(false);
       }
     }
   }
