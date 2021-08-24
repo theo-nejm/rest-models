@@ -48,8 +48,7 @@ export class Model<T> {
   }
 
   set(data: Partial<T>) {
-    const dataKeys = Object.keys(data);
-    if (dataKeys.includes("id"))
+    if (Object.keys(data).includes("id"))
       console.warn("We discourage changing the id value.");
 
     if (this.data) {
@@ -64,7 +63,7 @@ export class Model<T> {
     }
   }
 
-  // TODO: implementar overloadings para quando não apssar um parâmetro saber que virá apenas T
+  // TODO: implementar overloadings para quando não passar um parâmetro saber que virá apenas T
   // TODO: "species.name" -> bulbasaur
   get(param?: keyof T): T[keyof T] | T | null {
     if (param && !this.data[param])
