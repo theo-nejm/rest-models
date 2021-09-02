@@ -120,6 +120,13 @@ export class Model<T> {
     }
   }
 
+  async flush() {
+    api.get(this.url())
+      .then(this.setData);
+    
+    this.setPastData(null);
+  }
+  
   async remove() {
     this.setLoading(true);
 
