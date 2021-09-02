@@ -120,7 +120,7 @@ export class Model<T> {
     }
   }
 
-  async flush() {
+  flush() {
     api.get(this.url())
       .then(this.setData);
     
