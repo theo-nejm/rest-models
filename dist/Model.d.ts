@@ -9,6 +9,7 @@ export declare class Model<T> {
     private pastData;
     private loading;
     private modelConfig;
+    private setPastData;
     constructor(modelConfig: ModelConfig);
     private setLoading;
     get isLoading(): boolean;
@@ -17,7 +18,7 @@ export declare class Model<T> {
     set(data: Partial<T>): void;
     get(param?: keyof T): T[keyof T] | T | null;
     getOriginalData(): T;
-    url(): string;
+    private url;
     /**
      * Requests
      */
