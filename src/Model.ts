@@ -67,7 +67,7 @@ export class Model<T> {
   // TODO: "species.name" -> bulbasaur
   get(param?: keyof T): T[keyof T] | T | null {
     if (param && !this.data[param])
-      throw new ReferenceError("This parameter doesn't exists in this model.");
+      throw new ReferenceError(`The parameter ${param} doesn't exists in the model: \n${this.data.toString()}.`);
     if (param && this.data[param]) return this.data[param];
 
     return this.data;
@@ -137,7 +137,7 @@ export class Model<T> {
     this.setLoading(true);
 
     if (!this.id) {
-      throw new Error("Impossible to delete objects without a primary key.");
+      throw new Error("Impossible to delete objects without a primary key. /n/n You can set a primary key with the set({ id: value }) method or passing your preferred primary key as a parameter.");
     }
 
     if (this.data) {
