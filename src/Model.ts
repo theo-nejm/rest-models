@@ -119,13 +119,20 @@ export class Model<T> {
     }
   }
 
-  flush() {
-    api.get(this.url())
-      .then(this.setData);
-    
-    this.setPastData(null);
+  async flush() {
+    this.setLoading(true);
+    try {
+      const response = await api.get(this.url());
+      this.setData(response.data);
+
+      this.setPastData(null);
+    } catch (err) {
+      throw new Error(`Wasn't possible to reload data. \n\n ${err.message}`);
+    } finally {
+      this.setLoading(false);
+    }
   }
-  
+
   async remove() {
     this.setLoading(true);
 
