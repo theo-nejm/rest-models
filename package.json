@@ -3,14 +3,14 @@
   "author": {
     "name": "Antonio Sampaio"
   },
-  "version": "1.0.7",
+  "version": "1.0.11",
   "description": "Data manipulation made easy",
   "license": "MIT",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "repository": {
-    "url": "https://github.com/SampaioLeal/rest-models"
+    "url": "https://github.com/rest-models/rest-models"
   },
   "files": [
     "dist",

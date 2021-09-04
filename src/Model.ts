@@ -20,8 +20,11 @@ export class Model<T> {
     editMethod: "put",
   };
 
+  private setPastData(data: T | null) {
+    this.pastData = data;
+  }
+
   // TODO: analisar ligação com uma Collection
-  // TODO: adicionar estado de carregamento das requests
   constructor(modelConfig: ModelConfig) {
     makeAutoObservable(this, {}, { autoBind: true });
 
@@ -45,6 +48,9 @@ export class Model<T> {
   }
 
   set(data: Partial<T>) {
+    if (Object.keys(data).includes("id"))
+      console.warn("We discourage changing the id value.");
+
     if (this.data) {
       const newData = { ...this.data, ...data };
       const isDifferent = JSON.stringify(this.data) !== JSON.stringify(newData);
@@ -57,11 +63,11 @@ export class Model<T> {
     }
   }
 
-  // TODO: implementar overloadings para quando não apssar um parâmetro saber que virá apenas T
+  // TODO: implementar overloadings para quando não passar um parâmetro saber que virá apenas T
   // TODO: "species.name" -> bulbasaur
   get(param?: keyof T): T[keyof T] | T | null {
     if (param && !this.data[param])
-      throw new ReferenceError("This parameter doesn't exists in this model.");
+      throw new ReferenceError(`The parameter ${param} doesn't exists in the model. \n\n Model is represented by the endpoint: ${this.modelConfig.url}.`);
     if (param && this.data[param]) return this.data[param];
 
     return this.data;
@@ -71,7 +77,7 @@ export class Model<T> {
     return this.pastData || this.data;
   }
 
-  url() {
+  private url() {
     const url = this.modelConfig.url;
     const hasSlash = url[url.length - 1] === "/";
 
@@ -102,8 +108,8 @@ export class Model<T> {
         }
       }
 
-      this.data = response.data;
-      this.pastData = null;
+      this.setData(response.data);
+      this.setPastData(null);
     } catch (error) {
       throw new Error(
         `Wasn't possible to send your request to api. \n\n ${error.message}`
@@ -113,18 +119,36 @@ export class Model<T> {
     }
   }
 
+  async flush() {
+    this.setLoading(true);
+    try {
+      const response = await api.get(this.url());
+      this.setData(response.data);
+
+      this.setPastData(null);
+    } catch (err) {
+      throw new Error(`Wasn't possible to reload data. \n\n ${err.message}`);
+    } finally {
+      this.setLoading(false);
+    }
+  }
+
   async remove() {
+    this.setLoading(true);
+
     if (!this.id) {
-      throw new Error("Impossible to delete objects without a primary key.");
+      throw new Error("Impossible to delete objects without a primary key. /n/n You can set a primary key with the set({ id: value }) method or passing your preferred primary key as a parameter.");
     }
 
     if (this.data) {
       try {
         await api.delete(this.url());
-        this.pastData = null;
-        this.data = null;
+        this.setData(null);
+        this.setPastData(null);
       } catch (err) {
         throw new Error("Failed to delete model!");
+      } finally {
+        this.setLoading(false);
       }
     }
   }
