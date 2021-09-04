@@ -67,7 +67,7 @@ export class Model<T> {
   // TODO: "species.name" -> bulbasaur
   get(param?: keyof T): T[keyof T] | T | null {
     if (param && !this.data[param])
-      throw new ReferenceError(`The parameter ${param} doesn't exists in the model: \n${this.data.toString()}.`);
+      throw new ReferenceError(`The parameter ${param} doesn't exists in the model. \n\n Model is represented by the endpoint: ${this.modelConfig.url}.`);
     if (param && this.data[param]) return this.data[param];
 
     return this.data;
