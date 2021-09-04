@@ -49,7 +49,7 @@ export class Model<T> {
 
   set(data: Partial<T>) {
     if (Object.keys(data).includes("id"))
-      console.warn("We discourage changing the id value.");
+      console.warn("We discourage changing the primary key's value.");
 
     if (this.data) {
       const newData = { ...this.data, ...data };
@@ -67,7 +67,7 @@ export class Model<T> {
   // TODO: "species.name" -> bulbasaur
   get(param?: keyof T): T[keyof T] | T | null {
     if (param && !this.data[param])
-      throw new ReferenceError(`The parameter ${param} doesn't exists in the model: \n${this.data.toString()}.`);
+      throw new ReferenceError(`The parameter ${param} doesn't exists in the model that represents the url: \n${this.modelConfig.url}.`);
     if (param && this.data[param]) return this.data[param];
 
     return this.data;
